@@ -92,9 +92,16 @@ return System.Text.Encoding.UTF8.GetString(buffer);
     private void GetWeatherDate(string result)
     {
         response = JsonUtility.FromJson<ResponseData>(result);
-        TodayWeatherData();                             //今日天气
-        YesterdayWeatherData();                      //昨日天气
-        FutureWeatherData();                            //未来4日天气
+        if(response.desc == "OK")
+        {
+            TodayWeatherData();                             //今日天气
+            YesterdayWeatherData();                      //昨日天气
+            FutureWeatherData();                            //未来4日天气
+        }
+        else
+        {
+            Display.text = "无该城市天气信息，请重新输入";
+        }
      }
 
     private int SolveWindPower(string str)
