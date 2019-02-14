@@ -9,19 +9,27 @@ public class WeatherQuerier : MonoBehaviour {
 
     public Text InputText;                                   //输入的城市
     public Text Display;                                       //显示查询城市的天气信息
+    
 
     private ResponseData response;              //反序列天气信息
+    private string _cityName;
 
     public void Query()
     {
-        Display.text = null;
+        Display.text = "";
+        _cityName = InputText.text;
         StartCoroutine(Weather());             
     }
 
+    public void GetLocalWeather(string cityName)            //获取本地天气
+    {
+        _cityName = cityName;
+        StartCoroutine(Weather());
+    }
 
     IEnumerator Weather()
     {
-        WWW www = new WWW("http://wthrcdn.etouch.cn/weather_mini?city=" + InputText.text);              //通过天气api获取天气信息
+        WWW www = new WWW("http://wthrcdn.etouch.cn/weather_mini?city=" + _cityName);              //通过天气api获取天气信息
         yield return www;
         string result = Decompress(www.bytes);              //解压缩天气信息
         GetWeatherDate(result);
