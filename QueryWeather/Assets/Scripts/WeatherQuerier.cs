@@ -60,7 +60,6 @@ return System.Text.Encoding.UTF8.GetString(buffer);
     [System.Serializable]
     public class ResponseData
     {
-        public int status;
         public string desc;                             //是否成功获取天气信息
         public WeatherData data;               
     }
@@ -68,7 +67,6 @@ return System.Text.Encoding.UTF8.GetString(buffer);
     [System.Serializable]
     public class WeatherData
     {
-        public YesterdayData yesterday;                            //昨日天气信息
         public string city;                                                        //城市名称
         public string ganmao;                                               //穿衣建议
         public string wendu;                                                 //今日温度
@@ -76,25 +74,14 @@ return System.Text.Encoding.UTF8.GetString(buffer);
     }
 
     [System.Serializable]
-    public class YesterdayData
-    {
-        public string date;                 //日期信息
-        public string high;                 //最高气温
-        public string fx;                      //风向
-        public string low;                   //最低气温
-        public string fl;                       //风力
-        public string type;                 //天气类型
-    }
-
-    [System.Serializable]
     public class weatherForecastData
     {
-        public string date;
-        public string high;
-        public string fengxiang;
-        public string low;
-        public string fengli;
-        public string type;        
+        public string date;                         //日期信息
+        public string high;                         //最高气温
+        public string fengxiang;               //风向
+        public string low;                           //最低气温
+        public string fengli;                       //风力
+        public string type;                         //天气类型
     }
 
     private void GetWeatherDate(string result)
@@ -103,7 +90,6 @@ return System.Text.Encoding.UTF8.GetString(buffer);
         if(response.desc == "OK")
         {
             TodayWeatherData();                             //今日天气
-            YesterdayWeatherData();                      //昨日天气
             FutureWeatherData();                            //未来4日天气
         }
         else
@@ -127,16 +113,6 @@ return System.Text.Encoding.UTF8.GetString(buffer);
                                      "风力：" + response.data.forecast[0].fengli.Substring(9, SolveWindPower(response.data.forecast[0].fengli) - 9) + "\n" +
                                      "天气：" + response.data.forecast[0].type + "\n" +
                                      "穿衣建议：" + response.data.ganmao + "\n\n";
-    }
-
-    private void YesterdayWeatherData()
-    {
-        Display.text += "昨日 " + response.data.yesterday.date + "\n" +
-                                     "最高温度：" + response.data.yesterday.high + "\n" +
-                                     "最低温度：" + response.data.yesterday.low + "\n" +
-                                     "风向：" + response.data.yesterday.fx + "\n" +
-                                     "风力：" + response.data.yesterday.fl.Substring(9, SolveWindPower(response.data.yesterday.fl) - 9) + "\n" +
-                                     "天气：" + response.data.yesterday.type + "\n\n";
     }
 
     private void FutureWeatherData()
