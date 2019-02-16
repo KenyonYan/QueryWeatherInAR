@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using System;
+using System.Text;
+using Unity.IO.Compression;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +33,10 @@ public class WeatherQuerier : MonoBehaviour {
     {
         WWW www = new WWW("http://wthrcdn.etouch.cn/weather_mini?city=" + _cityName);              //通过天气api获取天气信息
         yield return www;
-        string result = Decompress(www.bytes);              //解压缩天气信息
+        //print(www.text);
+        //string result = Decompress(www.bytes);              //解压缩天气信息
+        string result = ungzip(www.bytes);              //解压缩天气信息
+        print(result);
         GetWeatherDate(result);
     }
 
@@ -47,15 +52,42 @@ string Decompress(byte[] bytes)
     System.Array.Copy(bytes, bytes.Length - 4, lengthBuffer, 0, 4);
     int uncompressedSize = System.BitConverter.ToInt32(lengthBuffer, 0);
     var buffer = new byte[uncompressedSize];
-using  (var ms = new MemoryStream(bytes))
-{
-   using (var gzip = new GZipStream(ms, CompressionMode.Decompress))
-   {
-       gzip.Read(buffer, 0, uncompressedSize);
-   }
-}
+    using  (var ms = new MemoryStream(bytes))
+    {
+       using (var gzip = new GZipStream(ms, CompressionMode.Decompress))
+       {
+           gzip.Read(buffer, 0, uncompressedSize);
+       }
+    }
 return System.Text.Encoding.UTF8.GetString(buffer);
 }
+
+
+    /// <summary>
+    /// 测试gzip解压
+    /// </summary>
+    /// <param name="compressedStr"></param>
+    /// <returns></returns>
+    public static string ungzip(byte[] bytes)
+    {
+        using (var compressedStream = new MemoryStream(bytes))
+        using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
+        using (var resultStream = new MemoryStream())
+        {
+            var buffer = new byte[4096 * 2];
+            int read;
+
+            while ((read = zipStream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                resultStream.Write(buffer, 0, read);
+            }
+
+            return Encoding.UTF8.GetString(resultStream.ToArray());
+        }
+    }
+
+
+
 
     [System.Serializable]
     public class ResponseData
