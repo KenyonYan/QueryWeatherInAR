@@ -1,2 +1,3 @@
 # QueryWeather
 在Unity3D中获取天气信息
+使用Vuforia中的Mid Air功能制作AR查询天气小Demo
